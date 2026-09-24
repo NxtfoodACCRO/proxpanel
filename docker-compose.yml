@@ -1,20 +1,25 @@
 services:
   proxpanel:
-    image: ${PROXPANEL_IMAGE:-itechlab/proxpanel:beta}
+    build:
+      context: .
+      args:
+        VERSION: ${PROXPANEL_VERSION:-nxtfood-fork}
     container_name: proxpanel
     restart: unless-stopped
     ports:
-      - "${PROXPANEL_PORT:-8080}:8080"
+      - "127.0.0.1:${PROXPANEL_PORT:-8097}:8080"
     environment:
       PORT: 8080
       PROXPANEL_RUNTIME_DIR: /opt/proxpanel-runtime
       PROXPANEL_DATA_DIR: /app/data
-      # Optionnel : fixe manuellement la clé maître. Sans cette variable, ProxPanel
-      # génère sa propre clé persistante dans le volume proxpanel_data.
+      # Optionnel : fixe manuellement la cle maitre. Sans cette variable, ProxPanel
+      # genere sa propre cle persistante dans le volume proxpanel_data.
       # APP_MASTER_KEY: change-this-with-a-long-random-secret
     volumes:
       - proxpanel_data:/app/data
       - proxpanel_runtime:/opt/proxpanel-runtime
+    security_opt:
+      - no-new-privileges:true
 
 volumes:
   proxpanel_data:
